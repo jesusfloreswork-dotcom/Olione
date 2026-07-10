@@ -57,6 +57,11 @@ const SISTEMA_STEPS = [
 
 const CAPACIDADES = [
   {
+    titulo: 'Sistemas conectados',
+    detalle:
+      'Diseñamos cómo hablan entre sí tus herramientas actuales, en vez de sumar una plataforma más. Es la base de todo lo demás que construimos.',
+  },
+  {
     titulo: 'Automatización de procesos',
     detalle:
       'Conectamos tareas repetitivas entre plataformas para que dejen de depender de que alguien las haga manualmente.',
@@ -65,11 +70,6 @@ const CAPACIDADES = [
     titulo: 'Agentes de IA',
     detalle:
       'Asistentes que ejecutan tareas específicas dentro de tu operación: responder, clasificar, resumir, verificar.',
-  },
-  {
-    titulo: 'Sistemas conectados',
-    detalle:
-      'Diseñamos cómo hablan entre sí tus herramientas actuales, en vez de sumar una plataforma más.',
   },
   {
     titulo: 'Dashboards operativos',
@@ -403,30 +403,45 @@ export default function OliOneLanding() {
           border: 2px solid transparent;
           cursor: pointer;
           text-decoration: none;
-          transition: transform 0.15s ease, background 0.15s ease;
+          transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
         }
-        .btn:hover { transform: translateY(-1px); }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
 
         .btn--primary {
           background: var(--ink);
           color: var(--cream);
         }
-        .btn--primary:hover { background: var(--ink-soft); }
+        .btn--primary:hover {
+          background: var(--ink-soft);
+          box-shadow: 0 8px 20px rgba(26, 26, 24, 0.25);
+        }
 
         .btn--outline {
           background: transparent;
           color: var(--ink);
           border-color: var(--ink);
         }
+        .btn--outline:hover {
+          background: var(--ink);
+          color: var(--cream);
+        }
 
         .section--dark .btn--outline {
           color: var(--cream);
           border-color: var(--cream);
         }
+        .section--dark .btn--outline:hover {
+          background: var(--cream);
+          color: var(--ink);
+        }
 
         .btn--lime {
           background: var(--lime);
           color: var(--ink);
+        }
+        .btn--lime:hover {
+          box-shadow: 0 8px 20px rgba(196, 244, 42, 0.35);
         }
 
         .btn:disabled {
@@ -659,6 +674,10 @@ export default function OliOneLanding() {
           padding: 1.25rem 1.5rem;
           cursor: pointer;
           text-align: left;
+          transition: background 0.15s ease;
+        }
+        .sistema-trigger:hover {
+          background: rgba(245, 241, 232, 0.06);
         }
         .sistema-letter {
           font-family: var(--font-display);
@@ -700,14 +719,26 @@ export default function OliOneLanding() {
           margin-top: 2.5rem;
           display: grid;
           gap: 1.25rem;
+          grid-template-columns: 1fr;
         }
         @media (min-width: 760px) {
-          .capacidades-grid { grid-template-columns: repeat(3, 1fr); }
+          .capacidades-grid {
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: minmax(160px, auto);
+          }
         }
         .capacidad-card {
           background: var(--ink-soft);
           border-radius: 18px;
           padding: 1.75rem;
+          border: 1px solid transparent;
+          transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+          cursor: default;
+        }
+        .capacidad-card:hover {
+          transform: translateY(-3px);
+          border-color: rgba(196, 244, 42, 0.35);
+          background: #333329;
         }
         .capacidad-card h3 {
           font-size: 1.05rem;
@@ -718,6 +749,25 @@ export default function OliOneLanding() {
         .capacidad-card p {
           opacity: 0.8;
           font-size: 0.95rem;
+        }
+        /* La primera tarjeta (Sistemas conectados) es la pieza central del bento:
+           ocupa el doble de ancho y alto en pantallas medianas+ para reflejar
+           que es el diferenciador principal de OLI One. */
+        @media (min-width: 760px) {
+          .capacidad-card--featured {
+            grid-column: span 2;
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          .capacidad-card--featured h3 {
+            font-size: 1.4rem;
+          }
+          .capacidad-card--featured p {
+            font-size: 1.05rem;
+            max-width: 26rem;
+          }
         }
 
         /* OLI Academy */
@@ -771,6 +821,11 @@ export default function OliOneLanding() {
           border-radius: 16px;
           padding: 1.5rem;
           background: white;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .caso-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 24px rgba(26, 26, 24, 0.08);
         }
         .caso-card h3 {
           font-size: 1rem;
@@ -1104,8 +1159,11 @@ export default function OliOneLanding() {
               Lo que construimos dentro de cada sistema.
             </h2>
             <div className="capacidades-grid">
-              {CAPACIDADES.map((cap) => (
-                <div className="capacidad-card" key={cap.titulo}>
+              {CAPACIDADES.map((cap, index) => (
+                <div
+                  className={`capacidad-card${index === 0 ? ' capacidad-card--featured' : ''}`}
+                  key={cap.titulo}
+                >
                   <h3>{cap.titulo}</h3>
                   <p>{cap.detalle}</p>
                 </div>
