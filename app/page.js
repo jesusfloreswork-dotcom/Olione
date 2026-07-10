@@ -288,14 +288,14 @@ export default function OliOneLanding() {
     <>
       <style>{`
         :root {
-          --cream: #f5f1e8;
-          --cream-soft: #eee8d9;
-          --ink: #1a1a18;
-          --ink-soft: #2a2a26;
-          --lime: #c4f42a;
-          --orange: #e8623d;
-          --violet: #6b5ce0;
-          --border-soft: rgba(26, 26, 24, 0.12);
+          --cream: #f1eee7;
+          --cream-soft: #e4dfd3;
+          --ink: #1c1b1f;
+          --ink-soft: #5c5964;
+          --lime: #d9e600;
+          --orange: #ff5a35;
+          --violet: #5b45c7;
+          --border-soft: #e4dfd3;
           --font-display: var(--font-display), 'Space Grotesk', sans-serif;
           --font-body: var(--font-body), 'Inter', sans-serif;
         }
@@ -354,11 +354,14 @@ export default function OliOneLanding() {
         .container {
           max-width: 1180px;
           margin: 0 auto;
-          padding: 0 1.5rem;
+          padding: 0 32px;
+        }
+        @media (max-width: 640px) {
+          .container { padding: 0 20px; }
         }
 
         .section {
-          padding: 5rem 0;
+          padding: 90px 0;
         }
 
         .section--dark {
@@ -367,39 +370,54 @@ export default function OliOneLanding() {
         }
 
         .eyebrow {
-          display: inline-block;
-          font-size: 0.8rem;
-          letter-spacing: 0.08em;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 13px;
+          letter-spacing: 1.2px;
           text-transform: uppercase;
-          font-weight: 600;
-          color: var(--orange);
-          margin-bottom: 1rem;
+          font-weight: 700;
+          color: var(--violet);
+          margin-bottom: 1.25rem;
+        }
+        .eyebrow::before {
+          content: '';
+          width: 16px;
+          height: 3px;
+          background: var(--orange);
+          border-radius: 2px;
+          flex-shrink: 0;
         }
 
         .section--dark .eyebrow { color: var(--lime); }
+        .section--dark .eyebrow::before { background: var(--lime); }
 
         .section-title {
-          font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+          font-size: clamp(26px, 4vw, 40px);
           font-weight: 700;
+          line-height: 1.15;
           max-width: 42rem;
         }
 
         .section-lede {
-          font-size: 1.05rem;
+          font-size: 16.5px;
+          line-height: 1.6;
           max-width: 38rem;
-          margin-top: 1rem;
-          opacity: 0.85;
+          margin-top: 0.875rem;
+          color: var(--ink-soft);
         }
+        .section--dark .section-lede { color: rgba(241, 238, 231, 0.72); }
 
         .btn {
           display: inline-flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          padding: 0.85rem 1.5rem;
-          border-radius: 999px;
+          padding: 15px 26px;
+          min-height: 44px;
+          border-radius: 100px;
           font-weight: 600;
-          font-size: 0.95rem;
+          font-size: 15px;
           border: 2px solid transparent;
           cursor: pointer;
           text-decoration: none;
@@ -411,10 +429,11 @@ export default function OliOneLanding() {
         .btn--primary {
           background: var(--ink);
           color: var(--cream);
+          border-color: var(--ink);
         }
         .btn--primary:hover {
-          background: var(--ink-soft);
-          box-shadow: 0 8px 20px rgba(26, 26, 24, 0.25);
+          background: white;
+          color: var(--ink);
         }
 
         .btn--outline {
@@ -441,7 +460,7 @@ export default function OliOneLanding() {
           color: var(--ink);
         }
         .btn--lime:hover {
-          box-shadow: 0 8px 20px rgba(196, 244, 42, 0.35);
+          box-shadow: 0 8px 20px rgba(217, 230, 0, 0.4);
         }
 
         .btn:disabled {
@@ -455,7 +474,7 @@ export default function OliOneLanding() {
           position: sticky;
           top: 0;
           z-index: 50;
-          background: rgba(245, 241, 232, 0.92);
+          background: rgba(241, 238, 231, 0.92);
           backdrop-filter: blur(8px);
           border-bottom: 1px solid var(--border-soft);
         }
@@ -544,15 +563,25 @@ export default function OliOneLanding() {
         }
 
         .hero h1 {
-          font-size: clamp(2.4rem, 5vw, 3.6rem);
-          letter-spacing: -0.01em;
+          font-size: clamp(32px, 5vw, 54px);
+          font-weight: 700;
+          line-height: 1.08;
+          letter-spacing: -1px;
+        }
+        .hero h1 mark {
+          background: var(--lime);
+          color: var(--ink);
+          padding: 0 8px;
+          border-radius: 6px;
+          font-style: normal;
         }
 
         .hero__sub {
-          margin-top: 1.5rem;
-          font-size: 1.15rem;
-          max-width: 34rem;
-          opacity: 0.85;
+          margin-top: 1.375rem;
+          font-size: 17.5px;
+          line-height: 1.6;
+          max-width: 520px;
+          color: var(--ink-soft);
         }
 
         .hero__ctas {
@@ -560,6 +589,39 @@ export default function OliOneLanding() {
           display: flex;
           flex-wrap: wrap;
           gap: 1rem;
+        }
+
+        .chips {
+          display: flex;
+          gap: 0.875rem;
+          margin-top: 2.5rem;
+          flex-wrap: wrap;
+        }
+        .chip {
+          background: white;
+          border: 1px solid var(--border-soft);
+          border-radius: 16px;
+          padding: 0.875rem 1.125rem;
+          box-shadow: 0 10px 24px -14px rgba(28, 27, 31, 0.25);
+          display: flex;
+          align-items: center;
+          gap: 0.7rem;
+        }
+        .chip .sw {
+          width: 30px;
+          height: 30px;
+          border-radius: 9px;
+          flex-shrink: 0;
+        }
+        .chip b {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 16px;
+          font-weight: 700;
+        }
+        .chip span {
+          font-size: 11.5px;
+          color: var(--ink-soft);
         }
 
         .hero__visual {
@@ -579,7 +641,7 @@ export default function OliOneLanding() {
         }
         .diagram-node--scattered rect {
           fill: none;
-          stroke: rgba(245, 241, 232, 0.35);
+          stroke: rgba(241, 238, 231, 0.35);
           stroke-width: 1.5;
         }
         .diagram-node--core rect {
@@ -598,7 +660,7 @@ export default function OliOneLanding() {
           font-weight: 600;
         }
         .diagram-line {
-          stroke: rgba(245, 241, 232, 0.3);
+          stroke: rgba(241, 238, 231, 0.3);
           stroke-width: 1.5;
           fill: none;
         }
@@ -634,7 +696,7 @@ export default function OliOneLanding() {
         .valor-grid {
           margin-top: 2.5rem;
           display: grid;
-          gap: 1.5rem;
+          gap: 1.375rem;
         }
         @media (min-width: 760px) {
           .valor-grid { grid-template-columns: repeat(3, 1fr); }
@@ -642,15 +704,30 @@ export default function OliOneLanding() {
         .valor-card {
           background: white;
           border: 1px solid var(--border-soft);
+          border-top: 5px solid var(--accent, var(--violet));
           border-radius: 18px;
-          padding: 1.75rem;
+          padding: 2rem 1.75rem;
+          transition: transform 0.18s ease;
+        }
+        .valor-card:hover { transform: translateY(-3px); }
+        .valor-card .num {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 14px;
+          font-weight: 700;
+          color: var(--accent, var(--violet));
+          margin-bottom: 1.125rem;
         }
         .valor-card h3 {
-          font-size: 1.15rem;
+          font-size: 21px;
           font-weight: 700;
-          margin-bottom: 0.6rem;
+          margin-bottom: 0.625rem;
         }
-        .valor-card p { opacity: 0.8; }
+        .valor-card p {
+          color: var(--ink-soft);
+          font-size: 15px;
+          line-height: 1.6;
+        }
 
         /* SISTEMA */
         .sistema-list {
@@ -659,7 +736,7 @@ export default function OliOneLanding() {
           gap: 0.75rem;
         }
         .sistema-item {
-          border: 1px solid rgba(245, 241, 232, 0.2);
+          border: 1px solid rgba(241, 238, 231, 0.2);
           border-radius: 16px;
           overflow: hidden;
         }
@@ -677,7 +754,7 @@ export default function OliOneLanding() {
           transition: background 0.15s ease;
         }
         .sistema-trigger:hover {
-          background: rgba(245, 241, 232, 0.06);
+          background: rgba(241, 238, 231, 0.06);
         }
         .sistema-letter {
           font-family: var(--font-display);
@@ -728,7 +805,7 @@ export default function OliOneLanding() {
           }
         }
         .capacidad-card {
-          background: var(--ink-soft);
+          background: rgba(241, 238, 231, 0.06);
           border-radius: 18px;
           padding: 1.75rem;
           border: 1px solid transparent;
@@ -737,8 +814,8 @@ export default function OliOneLanding() {
         }
         .capacidad-card:hover {
           transform: translateY(-3px);
-          border-color: rgba(196, 244, 42, 0.35);
-          background: #333329;
+          border-color: rgba(217, 230, 0, 0.35);
+          background: rgba(241, 238, 231, 0.1);
         }
         .capacidad-card h3 {
           font-size: 1.05rem;
@@ -819,45 +896,72 @@ export default function OliOneLanding() {
         .caso-card {
           border: 1px solid var(--border-soft);
           border-radius: 16px;
-          padding: 1.5rem;
+          padding: 1.75rem 1.5rem;
           background: white;
           transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
         .caso-card:hover {
           transform: translateY(-3px);
-          box-shadow: 0 10px 24px rgba(26, 26, 24, 0.08);
+          box-shadow: 0 10px 24px rgba(28, 27, 31, 0.1);
+        }
+        .caso-card .num {
+          display: block;
+          font-family: var(--font-display);
+          font-size: 13px;
+          font-weight: 700;
+          color: var(--violet);
+          margin-bottom: 0.75rem;
         }
         .caso-card h3 {
-          font-size: 1rem;
+          font-size: 16px;
           font-weight: 700;
           margin-bottom: 0.5rem;
         }
         .caso-card p {
-          font-size: 0.92rem;
-          opacity: 0.78;
+          font-size: 14px;
+          line-height: 1.55;
+          color: var(--ink-soft);
         }
 
         /* Indicadores */
-        .indicadores-list {
+        .indicadores-card {
           margin-top: 2.5rem;
-          display: grid;
-          gap: 0.75rem;
-          list-style: none;
-          padding: 0;
+          background: var(--ink);
+          border-radius: 22px;
+          padding: 2.25rem 1.875rem;
           max-width: 40rem;
         }
-        .indicadores-list li {
-          padding: 1rem 1.25rem;
-          background: white;
-          border: 1px solid var(--border-soft);
-          border-radius: 12px;
-          font-weight: 500;
+        .indicadores-row {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1.25rem 0;
+          border-bottom: 1px solid rgba(241, 238, 231, 0.12);
+        }
+        .indicadores-row:first-child { padding-top: 0; }
+        .indicadores-row:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+        .indicadores-row .dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--lime);
+          flex-shrink: 0;
+        }
+        .indicadores-row span {
+          font-family: var(--font-display);
+          font-size: 17px;
+          font-weight: 600;
+          color: var(--cream);
         }
         .indicadores-note {
           margin-top: 1.5rem;
-          font-size: 0.9rem;
-          opacity: 0.65;
+          font-size: 14px;
+          color: var(--ink-soft);
           max-width: 38rem;
+          line-height: 1.6;
         }
 
         /* Formulario */
@@ -920,7 +1024,7 @@ export default function OliOneLanding() {
           font-size: 0.95rem;
         }
         .form-status--success {
-          background: rgba(196, 244, 42, 0.35);
+          background: rgba(217, 230, 0, 0.35);
         }
         .form-status--error {
           background: rgba(232, 98, 61, 0.15);
@@ -982,7 +1086,7 @@ export default function OliOneLanding() {
         .footer-bottom {
           margin-top: 3rem;
           padding-top: 1.5rem;
-          border-top: 1px solid rgba(245, 241, 232, 0.15);
+          border-top: 1px solid rgba(241, 238, 231, 0.15);
           font-size: 0.82rem;
           opacity: 0.55;
         }
@@ -1046,7 +1150,7 @@ export default function OliOneLanding() {
         <section className="hero" id="top">
           <div className="container hero__grid">
             <div>
-              <h1>Diseñamos empresas más inteligentes.</h1>
+              <h1>Diseñamos empresas <mark>más inteligentes</mark>.</h1>
               <p className="hero__sub">
                 Tu empresa no necesita más herramientas. Necesita un mejor sistema.
                 Analizamos cómo funciona tu operación y construimos sistemas,
@@ -1056,6 +1160,29 @@ export default function OliOneLanding() {
               <div className="hero__ctas">
                 <a href="#diagnostico" className="btn btn--lime">Solicita un diagnóstico</a>
                 <a href="#metodo" className="btn btn--outline">Conoce el método SISTEMA®</a>
+              </div>
+              <div className="chips">
+                <div className="chip">
+                  <span className="sw" style={{ background: 'var(--violet)' }} />
+                  <div>
+                    <b>7</b>
+                    <span>Etapas del método SISTEMA®</span>
+                  </div>
+                </div>
+                <div className="chip">
+                  <span className="sw" style={{ background: 'var(--orange)' }} />
+                  <div>
+                    <b>100%</b>
+                    <span>Diagnóstico a tu medida</span>
+                  </div>
+                </div>
+                <div className="chip">
+                  <span className="sw" style={{ background: 'var(--lime)' }} />
+                  <div>
+                    <b>IA</b>
+                    <span>Aplicada donde reduce trabajo real</span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="hero__visual">
@@ -1090,15 +1217,17 @@ export default function OliOneLanding() {
               No vendemos software. Diseñamos cómo funciona tu empresa.
             </h2>
             <div className="valor-grid">
-              <div className="valor-card">
+              <div className="valor-card" style={{ '--accent': 'var(--violet)' }}>
+                <span className="num">01</span>
                 <h3>Consultoría, no plantillas</h3>
                 <p>Cada sistema se diseña a partir de cómo opera tu empresa hoy, no de un paquete genérico.</p>
               </div>
-              <div className="valor-card">
+              <div className="valor-card" style={{ '--accent': 'var(--orange)' }}>
+                <span className="num">02</span>
                 <h3>Automatización con propósito</h3>
                 <p>Automatizamos donde reduce trabajo real, no donde se ve bien en una demo.</p>
               </div>
-              <div className="valor-card">
+              <div className="valor-card" style={{ '--accent': 'var(--ink)' }}>
                 <h3>Acompañamiento continuo</h3>
                 <p>El sistema evoluciona con tu empresa: lo medimos y ajustamos después de implementarlo.</p>
               </div>
@@ -1210,8 +1339,9 @@ export default function OliOneLanding() {
               Un sistema distinto para cada área, conectado al mismo lugar.
             </h2>
             <div className="casos-grid">
-              {CASOS_USO.map((caso) => (
+              {CASOS_USO.map((caso, index) => (
                 <div className="caso-card" key={caso.depto}>
+                  <span className="num">{String(index + 1).padStart(2, '0')}</span>
                   <h3>{caso.depto}</h3>
                   <p>{caso.detalle}</p>
                 </div>
@@ -1227,11 +1357,14 @@ export default function OliOneLanding() {
             <h2 id="indicadores-title" className="section-title">
               Esto es lo que medimos una vez implementado el sistema.
             </h2>
-            <ul className="indicadores-list">
+            <div className="indicadores-card">
               {INDICADORES.map((ind) => (
-                <li key={ind}>{ind}</li>
+                <div className="indicadores-row" key={ind}>
+                  <span className="dot" aria-hidden="true" />
+                  <span>{ind}</span>
+                </div>
               ))}
-            </ul>
+            </div>
             <p className="indicadores-note">
               Los resultados varían según cada empresa y proceso. Definimos las
               métricas específicas de tu operación durante el diagnóstico, antes
