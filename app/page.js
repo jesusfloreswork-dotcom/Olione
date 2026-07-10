@@ -208,6 +208,20 @@ function Reveal({ children, delay = 0, as: Tag = 'div', className = '' }) {
   );
 }
 
+function IconArrow() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+      <path
+        d="M3.5 11.5L11.5 3.5M11.5 3.5H5M11.5 3.5V10"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function IconCheck() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -218,53 +232,6 @@ function IconCheck() {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-function SystemDiagram() {
-  return (
-    <svg
-      viewBox="0 0 480 360"
-      role="img"
-      aria-label="Diagrama que muestra procesos dispersos convergiendo en OLI One para formar un sistema conectado"
-      className="hero-diagram"
-    >
-      <g className="diagram-node diagram-node--scattered">
-        <rect x="20" y="30" width="110" height="46" rx="10" />
-        <text x="75" y="58" textAnchor="middle">Hojas de cálculo</text>
-      </g>
-      <g className="diagram-node diagram-node--scattered">
-        <rect x="20" y="100" width="110" height="46" rx="10" />
-        <text x="75" y="128" textAnchor="middle">WhatsApp</text>
-      </g>
-      <g className="diagram-node diagram-node--scattered">
-        <rect x="20" y="170" width="110" height="46" rx="10" />
-        <text x="75" y="198" textAnchor="middle">Correos</text>
-      </g>
-      <g className="diagram-node diagram-node--scattered">
-        <rect x="20" y="240" width="110" height="46" rx="10" />
-        <text x="75" y="268" textAnchor="middle">Plataformas sueltas</text>
-      </g>
-
-      <path className="diagram-line" d="M130 53 L210 175" />
-      <path className="diagram-line" d="M130 123 L210 175" />
-      <path className="diagram-line" d="M130 193 L210 185" />
-      <path className="diagram-line" d="M130 263 L210 195" />
-
-      <g className="diagram-node diagram-node--core">
-        <rect x="210" y="140" width="110" height="70" rx="14" />
-        <text x="265" y="180" textAnchor="middle" className="diagram-core-label">
-          OLI One
-        </text>
-      </g>
-
-      <path className="diagram-line diagram-line--out" d="M320 175 L400 175" />
-
-      <g className="diagram-node diagram-node--system">
-        <rect x="400" y="140" width="60" height="70" rx="14" />
-        <text x="430" y="180" textAnchor="middle">Sistema</text>
-      </g>
     </svg>
   );
 }
@@ -373,8 +340,6 @@ export default function OliOneLanding() {
           --orange: #ff5a35;
           --violet: #5b45c7;
           --border-soft: #e4dfd3;
-          --font-display: var(--font-display), 'Space Grotesk', sans-serif;
-          --font-body: var(--font-body), 'Inter', sans-serif;
         }
 
         * { box-sizing: border-box; }
@@ -560,17 +525,40 @@ export default function OliOneLanding() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 1.1rem 1.5rem;
+          padding: 1rem 32px;
           max-width: 1180px;
           margin: 0 auto;
         }
+        @media (max-width: 640px) {
+          .site-header__inner { padding: 1rem 20px; }
+        }
 
         .logo {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
           font-family: var(--font-display);
           font-weight: 700;
-          font-size: 1.3rem;
+          font-size: 1.2rem;
           text-decoration: none;
           letter-spacing: -0.01em;
+          color: var(--ink);
+        }
+        .logo-mark {
+          width: 28px;
+          height: 28px;
+          border-radius: 8px;
+          background: var(--ink);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .logo-mark span {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--lime);
         }
 
         .nav-desktop {
@@ -584,13 +572,19 @@ export default function OliOneLanding() {
         .nav-desktop a {
           text-decoration: none;
           font-weight: 500;
-          font-size: 0.95rem;
+          font-size: 14.5px;
+          color: var(--ink-soft);
+          transition: color 0.15s ease;
         }
+        .nav-desktop a:hover { color: var(--ink); }
 
         .header-actions {
           display: flex;
           align-items: center;
           gap: 1rem;
+        }
+        .header-cta {
+          display: none;
         }
 
         .menu-toggle {
@@ -598,6 +592,7 @@ export default function OliOneLanding() {
           border: none;
           cursor: pointer;
           padding: 0.5rem;
+          color: var(--ink);
         }
 
         .nav-mobile {
@@ -619,12 +614,12 @@ export default function OliOneLanding() {
         @media (min-width: 900px) {
           .nav-desktop { display: flex; }
           .menu-toggle { display: none; }
-          .header-actions .btn--primary-desktop-only { display: inline-flex; }
+          .header-cta { display: inline-flex; }
         }
 
         /* Hero */
         .hero {
-          padding: 4rem 0 5rem;
+          padding: 3.5rem 0 5.5rem;
         }
 
         .hero__grid {
@@ -635,7 +630,8 @@ export default function OliOneLanding() {
 
         @media (min-width: 960px) {
           .hero__grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 2.5rem;
           }
         }
 
@@ -668,82 +664,159 @@ export default function OliOneLanding() {
           gap: 1rem;
         }
 
-        .chips {
+        .hero__trust {
+          margin-top: 1.5rem;
           display: flex;
-          gap: 0.875rem;
-          margin-top: 2.5rem;
-          flex-wrap: wrap;
+          align-items: center;
+          gap: 0.6rem;
+          font-size: 13.5px;
+          color: var(--ink-soft);
         }
-        .chip {
+        .hero__trust svg { color: var(--lime); flex-shrink: 0; }
+
+        /* Visual: foto + tarjetas flotantes, estilo referencia */
+        .hero__visual {
+          position: relative;
+          max-width: 420px;
+          margin: 0 auto;
+        }
+        @media (min-width: 960px) {
+          .hero__visual { margin: 0 0 0 auto; }
+        }
+
+        .hero-photo {
+          position: relative;
+          border-radius: 28px;
+          overflow: hidden;
+          aspect-ratio: 4 / 5;
+          background: linear-gradient(155deg, var(--violet) 0%, var(--ink) 75%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          text-align: center;
+        }
+        .hero-photo span {
+          color: rgba(241, 238, 231, 0.55);
+          font-size: 13px;
+          line-height: 1.6;
+          max-width: 13rem;
+        }
+
+        .hero-float {
+          position: absolute;
           background: white;
-          border: 1px solid var(--border-soft);
           border-radius: 16px;
-          padding: 0.875rem 1.125rem;
-          box-shadow: 0 10px 24px -14px rgba(28, 27, 31, 0.25);
+          box-shadow: 0 18px 34px rgba(28, 27, 31, 0.18);
           display: flex;
           align-items: center;
           gap: 0.7rem;
+          padding: 0.9rem 1.1rem;
         }
-        .chip .sw {
+        .hero-float--badge {
+          top: 1.5rem;
+          left: -1rem;
+        }
+        .hero-float--badge .hero-float-icon {
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: rgba(217, 230, 0, 0.25);
+          color: #8a9600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .hero-float--badge b { display: block; font-size: 13.5px; font-weight: 700; }
+        .hero-float--badge span { font-size: 11.5px; color: var(--ink-soft); }
+
+        .hero-float--dark {
+          background: var(--ink);
+          color: var(--cream);
+          bottom: 6.5rem;
+          left: -1.5rem;
+          max-width: 13.5rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.4rem;
+          padding: 1.125rem 1.25rem;
+        }
+        .hero-float--dark .hero-float-icon {
+          width: 26px;
+          height: 26px;
+          border-radius: 8px;
+          background: var(--lime);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hero-float--dark p {
+          font-size: 12.5px;
+          line-height: 1.5;
+          color: rgba(241, 238, 231, 0.85);
+        }
+
+        .hero-float--chip {
+          bottom: 1.5rem;
+          right: -0.75rem;
+        }
+        .hero-float--chip .sw {
           width: 30px;
           height: 30px;
           border-radius: 9px;
+          background: var(--orange);
           flex-shrink: 0;
         }
-        .chip b {
+        .hero-float--chip b {
           display: block;
           font-family: var(--font-display);
           font-size: 16px;
           font-weight: 700;
         }
-        .chip span {
-          font-size: 11.5px;
+        .hero-float--chip span {
+          font-size: 11px;
           color: var(--ink-soft);
         }
 
-        .hero__visual {
-          background: var(--ink);
-          border-radius: 24px;
-          padding: 1.5rem;
+        @media (max-width: 700px) {
+          .hero-float {
+            position: static;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0.75rem;
+            max-width: none;
+          }
+          .hero-float--dark { flex-direction: row; align-items: center; }
         }
 
-        .hero-diagram {
-          width: 100%;
-          height: auto;
+        /* Franja de compatibilidad, tipo logo strip */
+        .compat-strip {
+          margin-top: 4rem;
+          padding-top: 2.5rem;
+          border-top: 1px solid var(--border-soft);
         }
-        .hero-diagram text {
-          font-family: var(--font-body);
+        .compat-label {
           font-size: 12px;
-          fill: var(--cream);
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: var(--ink-soft);
+          margin-bottom: 1.25rem;
         }
-        .diagram-node--scattered rect {
-          fill: none;
-          stroke: rgba(241, 238, 231, 0.35);
-          stroke-width: 1.5;
+        .compat-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
         }
-        .diagram-node--core rect {
-          fill: var(--lime);
-        }
-        .diagram-node--core text {
-          fill: var(--ink);
-          font-weight: 700;
-          font-size: 15px;
-        }
-        .diagram-node--system rect {
-          fill: var(--orange);
-        }
-        .diagram-node--system text {
-          fill: var(--ink);
+        .compat-item {
+          font-family: var(--font-display);
+          font-size: 14px;
           font-weight: 600;
-        }
-        .diagram-line {
-          stroke: rgba(241, 238, 231, 0.3);
-          stroke-width: 1.5;
-          fill: none;
-        }
-        .diagram-line--out {
-          stroke: var(--lime);
-          stroke-width: 2;
+          color: var(--ink-soft);
+          background: white;
+          border: 1px solid var(--border-soft);
+          border-radius: 999px;
+          padding: 0.5rem 1rem;
         }
 
         /* Problemas */
@@ -1295,7 +1368,10 @@ export default function OliOneLanding() {
       {/* Header */}
       <header className="site-header">
         <div className="site-header__inner">
-          <a href="#top" className="logo">OLI One</a>
+          <a href="#top" className="logo">
+            <span className="logo-mark" aria-hidden="true"><span /></span>
+            OLI One
+          </a>
 
           <nav aria-label="Navegación principal" className="nav-desktop">
             <a href="#metodo">Método SISTEMA®</a>
@@ -1306,8 +1382,9 @@ export default function OliOneLanding() {
           </nav>
 
           <div className="header-actions">
-            <a href="#diagnostico" className="btn btn--primary btn--primary-desktop-only" style={{ display: 'none' }}>
+            <a href="#diagnostico" className="btn btn--lime header-cta">
               Solicita un diagnóstico
+              <IconArrow />
             </a>
             <button
               type="button"
@@ -1354,35 +1431,55 @@ export default function OliOneLanding() {
                 reducir trabajo repetitivo, conectar procesos y mejorar tu operación.
               </p>
               <div className="hero__ctas">
-                <a href="#diagnostico" className="btn btn--lime">Solicita un diagnóstico</a>
+                <a href="#diagnostico" className="btn btn--lime">
+                  Solicita un diagnóstico
+                  <IconArrow />
+                </a>
                 <a href="#metodo" className="btn btn--outline">Conoce el método SISTEMA®</a>
               </div>
-              <div className="chips">
-                <div className="chip">
-                  <span className="sw" style={{ background: 'var(--violet)' }} />
-                  <div>
-                    <b>7</b>
-                    <span>Etapas del método SISTEMA®</span>
-                  </div>
-                </div>
-                <div className="chip">
-                  <span className="sw" style={{ background: 'var(--orange)' }} />
-                  <div>
-                    <b>100%</b>
-                    <span>Diagnóstico a tu medida</span>
-                  </div>
-                </div>
-                <div className="chip">
-                  <span className="sw" style={{ background: 'var(--lime)' }} />
-                  <div>
-                    <b>IA</b>
-                    <span>Aplicada donde reduce trabajo real</span>
-                  </div>
+              <p className="hero__trust">
+                <IconCheck />
+                Diagnóstico sin costo — respuesta en menos de 48 horas
+              </p>
+
+              <div className="compat-strip">
+                <p className="compat-label">Se conecta con las herramientas que ya usas</p>
+                <div className="compat-list">
+                  {['Google Workspace', 'WhatsApp Business', 'Notion', 'Slack', 'HubSpot', 'Excel / Sheets'].map((tool) => (
+                    <span className="compat-item" key={tool}>{tool}</span>
+                  ))}
                 </div>
               </div>
             </div>
+
             <div className="hero__visual">
-              <SystemDiagram />
+              <div className="hero-photo">
+                <span>
+                  [PLACEHOLDER: fotografía profesional del equipo o de una
+                  sesión de diagnóstico con cliente — pendiente de reemplazar]
+                </span>
+              </div>
+
+              <div className="hero-float hero-float--badge">
+                <span className="hero-float-icon"><IconCheck /></span>
+                <div>
+                  <b>Diagnóstico gratuito</b>
+                  <span>Sin compromiso</span>
+                </div>
+              </div>
+
+              <div className="hero-float hero-float--dark">
+                <span className="hero-float-icon" aria-hidden="true" />
+                <p>Consultoría que combina estrategia, datos e inteligencia artificial.</p>
+              </div>
+
+              <div className="hero-float hero-float--chip">
+                <span className="sw" aria-hidden="true" />
+                <div>
+                  <b>7</b>
+                  <span>Etapas del método SISTEMA®</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
