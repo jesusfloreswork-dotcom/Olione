@@ -657,12 +657,14 @@ export default function OliOneLanding() {
                 </p>
                 <a
                   href="https://oli.academy"
-                  className="btn btn--primary"
+                  className="btn btn--primary academy-btn"
                   style={{ background: 'white', color: 'var(--violet)' }}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Conoce OLI Academy
+                  Conoce
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/oli-academy-logo.png" alt="OLI Academy" className="academy-btn-logo" />
                 </a>
               </div>
               <div className="academy-img-wrap">

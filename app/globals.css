@@ -92,15 +92,20 @@
         }
         .eyebrow::before {
           content: '';
-          width: 16px;
-          height: 3px;
-          background: var(--orange);
-          border-radius: 2px;
+          width: 13px;
+          height: 13px;
+          background-color: var(--orange);
+          -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 0L9.6 6.4L16 8L9.6 9.6L8 16L6.4 9.6L0 8L6.4 6.4Z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 0L9.6 6.4L16 8L9.6 9.6L8 16L6.4 9.6L0 8L6.4 6.4Z'/%3E%3C/svg%3E");
+          -webkit-mask-size: contain;
+          mask-size: contain;
+          -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
           flex-shrink: 0;
         }
 
         .section--dark .eyebrow { color: var(--lime); }
-        .section--dark .eyebrow::before { background: var(--lime); }
+        .section--dark .eyebrow::before { background-color: var(--lime); }
 
         .section-title {
           font-size: clamp(26px, 4vw, 40px);
@@ -763,6 +768,11 @@
         }
         .academy-card p { opacity: 0.9; }
         .academy-card .btn { margin-top: 1.5rem; }
+        .academy-btn-logo {
+          height: 16px;
+          width: auto;
+          display: block;
+        }
         .academy-img-wrap {
           border-radius: 18px;
           overflow: hidden;
