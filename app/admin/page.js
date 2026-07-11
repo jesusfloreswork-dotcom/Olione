@@ -43,7 +43,7 @@ function AdminLogin({ onAuthed }) {
   return (
     <div className="admin-login">
       <form className="admin-login-card" onSubmit={handleSubmit}>
-        <h1>OLI One — Admin</h1>
+        <h1>Oli — Admin</h1>
         <p>Acceso solo para el equipo interno.</p>
         {error && <div className="admin-error">{error}</div>}
         <div className="admin-field">
@@ -72,6 +72,231 @@ function AdminLogin({ onAuthed }) {
           {loading ? 'Entrando…' : 'Entrar'}
         </button>
       </form>
+    </div>
+  );
+}
+
+// Paso de verificación en dos pasos al iniciar sesión, solo aparece si
+// la cuenta ya tiene 2FA activo (ver SecuritySettings más abajo).
+function MfaChallenge({ onVerified }) {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+
+    const { data: factors, error: factorsError } = await supabaseBrowser.auth.mfa.listFactors();
+    const totpFactor = factors?.totp?.[0];
+    if (factorsError || !totpFactor) {
+      setLoading(false);
+      setError('No se encontró tu método de verificación. Contacta al administrador.');
+      return;
+    }
+
+    const { data: challenge, error: challengeError } = await supabaseBrowser.auth.mfa.challenge({
+      factorId: totpFactor.id,
+    });
+    if (challengeError) {
+      setLoading(false);
+      setError('No se pudo iniciar la verificación. Intenta de nuevo.');
+      return;
+    }
+
+    const { error: verifyError } = await supabaseBrowser.auth.mfa.verify({
+      factorId: totpFactor.id,
+      challengeId: challenge.id,
+      code,
+    });
+    setLoading(false);
+    if (verifyError) {
+      setError('Código incorrecto. Revisa tu app de autenticación.');
+      return;
+    }
+    onVerified();
+  }
+
+  return (
+    <div className="admin-login">
+      <form className="admin-login-card" onSubmit={handleSubmit}>
+        <h1>Verificación en dos pasos</h1>
+        <p>Escribe el código de 6 dígitos de tu app de autenticación.</p>
+        {error && <div className="admin-error">{error}</div>}
+        <div className="admin-field">
+          <label htmlFor="mfa-code">Código</label>
+          <input
+            id="mfa-code"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+            required
+          />
+        </div>
+        <button type="submit" className="admin-btn" disabled={loading || code.length !== 6}>
+          {loading ? 'Verificando…' : 'Verificar'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// Panel para activar/desactivar 2FA. La primera vez que se activa, se
+// exige verificar un código antes de confirmar — así no se puede
+// activar por error con una app mal configurada y quedar fuera.
+function SecuritySettings({ onClose }) {
+  const [factors, setFactors] = useState(null);
+  const [enrolling, setEnrolling] = useState(false);
+  const [qrCode, setQrCode] = useState(null);
+  const [secret, setSecret] = useState(null);
+  const [factorId, setFactorId] = useState(null);
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const loadFactors = useCallback(async () => {
+    const { data } = await supabaseBrowser.auth.mfa.listFactors();
+    setFactors(data?.totp || []);
+  }, []);
+
+  useEffect(() => {
+    loadFactors();
+  }, [loadFactors]);
+
+  async function startEnroll() {
+    setError('');
+    setLoading(true);
+    const { data, error: enrollError } = await supabaseBrowser.auth.mfa.enroll({
+      factorType: 'totp',
+    });
+    setLoading(false);
+    if (enrollError) {
+      setError('No se pudo iniciar la activación. Intenta de nuevo.');
+      return;
+    }
+    setFactorId(data.id);
+    setQrCode(data.totp.qr_code);
+    setSecret(data.totp.secret);
+    setEnrolling(true);
+  }
+
+  async function confirmEnroll(event) {
+    event.preventDefault();
+    setError('');
+    setLoading(true);
+    const { data: challenge, error: challengeError } = await supabaseBrowser.auth.mfa.challenge({
+      factorId,
+    });
+    if (challengeError) {
+      setLoading(false);
+      setError('No se pudo verificar. Intenta de nuevo.');
+      return;
+    }
+    const { error: verifyError } = await supabaseBrowser.auth.mfa.verify({
+      factorId,
+      challengeId: challenge.id,
+      code,
+    });
+    setLoading(false);
+    if (verifyError) {
+      setError('Código incorrecto. Revisa tu app de autenticación e intenta de nuevo.');
+      return;
+    }
+    setEnrolling(false);
+    setQrCode(null);
+    setSecret(null);
+    setCode('');
+    loadFactors();
+  }
+
+  async function removeFactor(id) {
+    await supabaseBrowser.auth.mfa.unenroll({ factorId: id });
+    loadFactors();
+  }
+
+  return (
+    <div className="admin-modal-backdrop" onClick={onClose}>
+      <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="admin-modal-head">
+          <div>
+            <h3>Seguridad</h3>
+            <p>Verificación en dos pasos (2FA)</p>
+          </div>
+          <button type="button" className="admin-modal-close" onClick={onClose} aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
+
+        {error && <div className="admin-error">{error}</div>}
+
+        {factors === null && <p>Cargando…</p>}
+
+        {factors && factors.length > 0 && !enrolling && (
+          <>
+            <p>Verificación en dos pasos activa en esta cuenta.</p>
+            {factors.map((f) => (
+              <button
+                key={f.id}
+                type="button"
+                className="admin-logout"
+                onClick={() => removeFactor(f.id)}
+              >
+                Desactivar
+              </button>
+            ))}
+          </>
+        )}
+
+        {factors && factors.length === 0 && !enrolling && (
+          <>
+            <p>
+              No tienes verificación en dos pasos activa. Se recomienda
+              activarla — necesitas una app como Google Authenticator, Authy
+              o similar en tu teléfono.
+            </p>
+            <button type="button" className="admin-btn" onClick={startEnroll} disabled={loading}>
+              {loading ? 'Preparando…' : 'Activar verificación en dos pasos'}
+            </button>
+          </>
+        )}
+
+        {enrolling && (
+          <form onSubmit={confirmEnroll}>
+            <p>Escanea este código con tu app de autenticación:</p>
+            {qrCode && (
+              // El QR viene firmado por nuestro propio proyecto de Supabase
+              // (no es contenido de un usuario), por eso es seguro insertarlo.
+              // eslint-disable-next-line react/no-danger
+              <div
+                style={{ background: 'white', padding: '1rem', borderRadius: 12, marginBottom: '1rem' }}
+                dangerouslySetInnerHTML={{ __html: qrCode }}
+              />
+            )}
+            {secret && (
+              <p style={{ fontSize: '0.8rem', wordBreak: 'break-all', color: 'var(--ink-soft)' }}>
+                O ingresa este código manualmente en tu app: <code>{secret}</code>
+              </p>
+            )}
+            <div className="admin-field">
+              <label htmlFor="enroll-code">Código de 6 dígitos</label>
+              <input
+                id="enroll-code"
+                inputMode="numeric"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                required
+              />
+            </div>
+            <button type="submit" className="admin-btn" disabled={loading || code.length !== 6}>
+              {loading ? 'Confirmando…' : 'Confirmar y activar'}
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 }
@@ -211,8 +436,10 @@ function Board({ leads, onOpenLead }) {
 
 export default function AdminPage() {
   const [session, setSession] = useState(undefined); // undefined = cargando, null = sin sesión
+  const [needsMfaChallenge, setNeedsMfaChallenge] = useState(false);
   const [leads, setLeads] = useState([]);
   const [selectedLead, setSelectedLead] = useState(null);
+  const [showSecurity, setShowSecurity] = useState(false);
 
   const loadLeads = useCallback(async () => {
     const { data } = await supabaseBrowser
@@ -220,6 +447,15 @@ export default function AdminPage() {
       .select('*')
       .order('created_at', { ascending: false });
     if (data) setLeads(data);
+  }, []);
+
+  const checkMfaStatus = useCallback(async () => {
+    const { data } = await supabaseBrowser.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (data && data.nextLevel === 'aal2' && data.currentLevel !== 'aal2') {
+      setNeedsMfaChallenge(true);
+    } else {
+      setNeedsMfaChallenge(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -233,7 +469,12 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (!session) return undefined;
+    if (!session) return;
+    checkMfaStatus();
+  }, [session, checkMfaStatus]);
+
+  useEffect(() => {
+    if (!session || needsMfaChallenge) return undefined;
     loadLeads();
 
     const channel = supabaseBrowser
@@ -246,7 +487,7 @@ export default function AdminPage() {
       .subscribe();
 
     return () => supabaseBrowser.removeChannel(channel);
-  }, [session, loadLeads]);
+  }, [session, needsMfaChallenge, loadLeads]);
 
   if (session === undefined) {
     return <div className="admin-loading">Cargando…</div>;
@@ -256,11 +497,18 @@ export default function AdminPage() {
     return <AdminLogin onAuthed={() => {}} />;
   }
 
+  if (needsMfaChallenge) {
+    return <MfaChallenge onVerified={() => setNeedsMfaChallenge(false)} />;
+  }
+
   return (
     <div className="admin-shell">
       <div className="admin-topbar">
-        <strong>OLI One — CRM</strong>
+        <strong>Oli — CRM</strong>
         <div className="admin-topbar-actions">
+          <button type="button" className="admin-logout" onClick={() => setShowSecurity(true)}>
+            Seguridad
+          </button>
           <span>{session.user.email}</span>
           <button
             type="button"
@@ -284,6 +532,8 @@ export default function AdminPage() {
           }}
         />
       )}
+
+      {showSecurity && <SecuritySettings onClose={() => setShowSecurity(false)} />}
     </div>
   );
 }

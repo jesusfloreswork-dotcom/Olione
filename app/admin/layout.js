@@ -1,7 +1,7 @@
 import './admin.css';
 
 export const metadata = {
-  title: 'Admin — OLI One',
+  title: 'Admin — Oli',
   robots: { index: false, follow: false },
 };
 

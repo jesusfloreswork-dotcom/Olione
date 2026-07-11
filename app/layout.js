@@ -19,29 +19,29 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://olione.vercel.app';
 
 export const metadata = {
   metadataBase: new URL(siteUrl),
-  title: 'OLI One — Empresas más inteligentes',
+  title: 'Oli — Empresas más inteligentes',
   description:
-    'OLI One analiza cómo funciona tu empresa y construye sistemas, automatizaciones y soluciones con inteligencia artificial para reducir trabajo repetitivo, conectar procesos y mejorar tu operación.',
+    'Oli analiza cómo funciona tu empresa y construye sistemas, automatizaciones y soluciones con inteligencia artificial para reducir trabajo repetitivo, conectar procesos y mejorar tu operación.',
   keywords: [
     'automatización de procesos',
     'inteligencia artificial para empresas',
     'sistemas empresariales',
     'consultoría tecnológica',
-    'OLI One',
+    'Oli',
   ],
-  authors: [{ name: 'OLI One' }],
+  authors: [{ name: 'Oli' }],
   openGraph: {
-    title: 'OLI One — Empresas más inteligentes',
+    title: 'Oli — Empresas más inteligentes',
     description:
       'Tu empresa no necesita más herramientas. Necesita un mejor sistema.',
     url: siteUrl,
-    siteName: 'OLI One',
+    siteName: 'Oli',
     locale: 'es_MX',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'OLI One — Empresas más inteligentes',
+    title: 'Oli — Empresas más inteligentes',
     description:
       'Tu empresa no necesita más herramientas. Necesita un mejor sistema.',
   },
@@ -54,10 +54,10 @@ export const metadata = {
 const organizationJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'OLI One',
+  name: 'Oli',
   url: siteUrl,
   description:
-    'OLI One diseña sistemas, automatizaciones y soluciones con inteligencia artificial para empresas.',
+    'Oli diseña sistemas, automatizaciones y soluciones con inteligencia artificial para empresas.',
   slogan: 'Empresas más inteligentes.',
 };
 
@@ -67,7 +67,7 @@ const serviceJsonLd = {
   serviceType: 'Consultoría en sistemas y automatización empresarial con IA',
   provider: {
     '@type': 'Organization',
-    name: 'OLI One',
+    name: 'Oli',
   },
   areaServed: 'MX',
   description:

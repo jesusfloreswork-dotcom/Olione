@@ -6,8 +6,8 @@ import { COMPANY_SIZES, validateLead } from '@/lib/validation';
 // Imágenes del carrusel del hero. Colócalas en /public con estos nombres
 // exactos: public/1.png y public/2.png.
 const HERO_IMAGES = [
-  { src: '/1.png', alt: 'OLI One — vista previa 1' },
-  { src: '/2.png', alt: 'OLI One — vista previa 2' },
+  { src: '/1.png', alt: 'Oli — vista previa 1' },
+  { src: '/2.png', alt: 'Oli — vista previa 2' },
 ];
 
 const SISTEMA_STEPS = [
@@ -213,7 +213,7 @@ function HeroCarousel({ images }) {
         />
       ))}
       {images.length > 1 && (
-        <div className="hero-carousel-dots" role="tablist" aria-label="Vistas previas de OLI One">
+        <div className="hero-carousel-dots" role="tablist" aria-label="Vistas previas de Oli">
           {images.map((image, index) => (
             <button
               key={image.src}
@@ -409,7 +409,7 @@ export default function OliOneLanding() {
         <div className="site-header__inner">
           <a href="#top" className="logo">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="OLI One" className="logo-img" />
+            <img src="/logo.png" alt="Oli" className="logo-img" />
           </a>
 
           <nav aria-label="Navegación principal" className="nav-desktop">
@@ -640,13 +640,13 @@ export default function OliOneLanding() {
         {/* OLI Academy */}
         <section className="section" id="academy" aria-labelledby="academy-title">
           <div className="container">
-            <span className="eyebrow">Una solución de OLI One</span>
+            <span className="eyebrow">Una solución de Oli</span>
             <h2 id="academy-title" className="section-title">
               Una vez implementado el sistema, no te dejamos solo.
             </h2>
             <div className="academy-card">
               <div>
-                <span className="academy-tag">Una solución de OLI One</span>
+                <span className="academy-tag">Una solución de Oli</span>
                 <h3>Capacitamos a tu equipo con las metodologías necesarias para operarlo.</h3>
                 <p>
                   Aplicar el sistema es solo la mitad del trabajo. OLI Academy
@@ -846,7 +846,7 @@ export default function OliOneLanding() {
                     aria-describedby={errors.consentimiento ? 'error-consentimiento' : undefined}
                   />
                   <label htmlFor="consentimiento">
-                    Acepto que OLI One me contacte y almacene mis datos conforme al aviso de privacidad.
+                    Acepto que Oli me contacte y almacene mis datos conforme al aviso de privacidad.
                   </label>
                 </div>
                 {errors.consentimiento && <span className="field-error" id="error-consentimiento">{errors.consentimiento}</span>}
@@ -889,7 +889,7 @@ export default function OliOneLanding() {
       <footer className="site-footer">
         <div className="container footer-grid">
           <div className="footer-brand">
-            <span className="logo" style={{ color: 'var(--cream)' }}>OLI One</span>
+            <span className="logo" style={{ color: 'var(--cream)' }}>Oli</span>
             <p>
               Empresas más inteligentes. Diseñamos sistemas, automatizaciones y
               soluciones con inteligencia artificial para empresas en México.
@@ -912,7 +912,7 @@ export default function OliOneLanding() {
           </div>
         </div>
         <div className="container footer-bottom">
-          <span suppressHydrationWarning>© {new Date().getFullYear()}</span> OLI One. Todos los derechos reservados. SISTEMA® es una metodología propia de OLI One.
+          <span suppressHydrationWarning>© {new Date().getFullYear()}</span> Oli. Todos los derechos reservados. SISTEMA® es una metodología propia de Oli.
         </div>
       </footer>
     </>
