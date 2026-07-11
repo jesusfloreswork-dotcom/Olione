@@ -304,7 +304,7 @@
           letter-spacing: -1px;
         }
         .hero h1 mark {
-          background: var(--lime);
+          background: var(--orange);
           color: var(--ink);
           padding: 0 8px;
           border-radius: 6px;
