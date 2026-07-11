@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { COMPANY_SIZES, validateLead } from '@/lib/validation';
 
 // Imágenes del carrusel del hero. Colócalas en /public con estos nombres
@@ -197,13 +196,12 @@ function HeroCarousel({ images }) {
   return (
     <>
       {images.map((image, index) => (
-        <Image
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           key={image.src}
           src={image.src}
           alt={image.alt}
-          fill
-          sizes="(max-width: 960px) 90vw, 420px"
-          priority={index === 0}
+          loading={index === 0 ? 'eager' : 'lazy'}
           className={`hero-carousel-img${index === active ? ' hero-carousel-img--active' : ''}`}
         />
       ))}
@@ -1906,7 +1904,7 @@ export default function OliOneLanding() {
           </div>
         </div>
         <div className="container footer-bottom">
-          © {new Date().getFullYear()} OLI One. Todos los derechos reservados. SISTEMA® es una metodología propia de OLI One.
+          <span suppressHydrationWarning>© {new Date().getFullYear()}</span> OLI One. Todos los derechos reservados. SISTEMA® es una metodología propia de OLI One.
         </div>
       </footer>
     </>
