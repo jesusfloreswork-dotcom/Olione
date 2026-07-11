@@ -236,9 +236,57 @@ function IconCheck() {
   );
 }
 
+// Rueda circular del método SISTEMA®: 7 nodos distribuidos en un círculo,
+// conectados por un trazo que se dibuja al entrar en el viewport. Representa
+// el método como ciclo continuo (Adapt vuelve a conectar con Scan), no como
+// una línea de tiempo cerrada.
+function SistemaWheel({ steps, activeIndex, onSelect, inView }) {
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+
+  return (
+    <div className="wheel-wrap">
+      <svg viewBox="0 0 100 100" className="wheel-svg" aria-hidden="true">
+        <circle className="wheel-track" cx="50" cy="50" r={radius} />
+        <circle
+          className="wheel-progress"
+          cx="50"
+          cy="50"
+          r={radius}
+          strokeDasharray={circumference}
+          strokeDashoffset={inView ? 0 : circumference}
+        />
+      </svg>
+      <div className="wheel-center">
+        <b>SISTEMA®</b>
+        <span>Ciclo de mejora continua</span>
+      </div>
+      {steps.map((step, index) => {
+        const angle = (index / steps.length) * 2 * Math.PI - Math.PI / 2;
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
+        const isActive = activeIndex === index;
+        return (
+          <button
+            key={`${step.letter}-${index}`}
+            type="button"
+            className={`wheel-node-btn${isActive ? ' wheel-node-btn--active' : ''}`}
+            style={{ left: `${x}%`, top: `${y}%` }}
+            onClick={() => onSelect(index)}
+            aria-pressed={isActive}
+            aria-label={`${step.word}: ${step.verbo}`}
+          >
+            {step.letter}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function OliOneLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openStep, setOpenStep] = useState('S-0');
+  const [sistemaActive, setSistemaActive] = useState(0);
   const [sistemaRef, sistemaInView] = useInView(0.2);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -790,35 +838,6 @@ export default function OliOneLanding() {
           .hero-float--dark { flex-direction: row; align-items: center; }
         }
 
-        /* Franja de compatibilidad, tipo logo strip */
-        .compat-strip {
-          margin-top: 4rem;
-          padding-top: 2.5rem;
-          border-top: 1px solid var(--border-soft);
-        }
-        .compat-label {
-          font-size: 12px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: var(--ink-soft);
-          margin-bottom: 1.25rem;
-        }
-        .compat-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.75rem;
-        }
-        .compat-item {
-          font-family: var(--font-display);
-          font-size: 14px;
-          font-weight: 600;
-          color: var(--ink-soft);
-          background: white;
-          border: 1px solid var(--border-soft);
-          border-radius: 999px;
-          padding: 0.5rem 1rem;
-        }
-
         /* Problemas */
         .problemas-grid {
           margin-top: 2.5rem;
@@ -916,87 +935,166 @@ export default function OliOneLanding() {
           line-height: 1.6;
         }
 
-        /* SISTEMA */
-        .sistema-list {
+        /* SISTEMA — rueda circular (ciclo continuo de mejora) */
+        .sistema-layout {
           margin-top: 2.5rem;
           display: grid;
-          gap: 1.5rem;
+          gap: 2.5rem;
+          justify-items: center;
         }
-        .sistema-row-button {
+        @media (min-width: 860px) {
+          .sistema-layout {
+            grid-template-columns: minmax(280px, 380px) 1fr;
+            align-items: center;
+            justify-items: stretch;
+          }
+        }
+
+        .wheel-wrap {
+          position: relative;
           width: 100%;
+          max-width: 340px;
+          aspect-ratio: 1 / 1;
+          margin: 0 auto;
+        }
+        .wheel-svg {
+          width: 100%;
+          height: 100%;
           display: block;
-          background: transparent;
-          border: none;
-          padding: 0;
-          margin: 0;
-          text-align: left;
-          cursor: pointer;
-          color: var(--cream);
         }
-        .sistema-row-head {
-          display: flex;
-          align-items: baseline;
-          justify-content: space-between;
-          gap: 1rem;
-          margin-bottom: 0.6rem;
+        .wheel-track {
+          fill: none;
+          stroke: rgba(241, 238, 231, 0.15);
+          stroke-width: 1.6;
         }
-        .sistema-row-label {
-          display: flex;
-          align-items: baseline;
-          gap: 0.75rem;
-          flex-wrap: wrap;
+        .wheel-progress {
+          fill: none;
+          stroke: var(--lime);
+          stroke-width: 1.6;
+          stroke-linecap: round;
+          transform: rotate(-90deg);
+          transform-origin: 50% 50%;
+          transition: stroke-dashoffset 1.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .sistema-row-letter {
+        @media (prefers-reduced-motion: reduce) {
+          .wheel-progress { transition: none; }
+        }
+        .wheel-center {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          pointer-events: none;
+          width: 60%;
+        }
+        .wheel-center b {
+          display: block;
           font-family: var(--font-display);
-          font-size: 1.6rem;
+          font-weight: 700;
+          font-size: 0.95rem;
+          color: var(--cream);
+          letter-spacing: 0.02em;
+        }
+        .wheel-center span {
+          display: block;
+          font-size: 0.7rem;
+          color: rgba(241, 238, 231, 0.5);
+          margin-top: 0.3rem;
+          line-height: 1.4;
+        }
+        .wheel-node-btn {
+          position: absolute;
+          width: 52px;
+          height: 52px;
+          margin-left: -26px;
+          margin-top: -26px;
+          border-radius: 50%;
+          border: 2px solid rgba(241, 238, 231, 0.2);
+          background: var(--ink);
+          color: var(--cream);
+          font-family: var(--font-display);
+          font-weight: 700;
+          font-size: 1.15rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+        }
+        .wheel-node-btn:hover {
+          border-color: var(--lime);
+          transform: scale(1.08);
+        }
+        .wheel-node-btn--active {
+          background: var(--lime);
+          color: var(--ink);
+          border-color: var(--lime);
+          transform: scale(1.1);
+        }
+
+        .sistema-detail {
+          background: rgba(241, 238, 231, 0.05);
+          border: 1px solid rgba(241, 238, 231, 0.12);
+          border-radius: 20px;
+          padding: 2rem;
+          width: 100%;
+        }
+        .sistema-detail-head {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .sistema-detail-letter {
+          font-family: var(--font-display);
+          font-size: 2.25rem;
           font-weight: 700;
           color: var(--lime);
+          line-height: 1;
         }
-        .sistema-row-word {
+        .sistema-detail-word {
           font-weight: 700;
-          font-size: 1.05rem;
+          font-size: 1.15rem;
         }
-        .sistema-row-verbo {
-          font-size: 0.85rem;
+        .sistema-detail-verbo {
+          font-size: 0.9rem;
           color: rgba(241, 238, 231, 0.6);
         }
-        .sistema-row-step {
+        .sistema-detail p {
+          margin-top: 1.25rem;
+          font-size: 1rem;
+          line-height: 1.6;
+          color: rgba(241, 238, 231, 0.85);
+        }
+        .sistema-detail-nav {
+          margin-top: 1.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .sistema-detail-count {
           font-family: var(--font-display);
           font-size: 0.85rem;
           color: rgba(241, 238, 231, 0.5);
-          flex-shrink: 0;
         }
-        .sistema-track {
-          position: relative;
-          height: 10px;
-          border-radius: 999px;
-          background: rgba(241, 238, 231, 0.12);
-          overflow: hidden;
+        .sistema-detail-buttons {
+          display: flex;
+          gap: 0.6rem;
         }
-        .sistema-fill {
-          position: absolute;
-          inset: 0;
-          width: 0%;
-          border-radius: 999px;
-          background: linear-gradient(90deg, var(--violet), var(--lime));
-          transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+        .sistema-nav-btn {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(241, 238, 231, 0.08);
+          color: var(--cream);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background 0.15s ease;
         }
-        .sistema-row[data-open='true'] .sistema-fill {
-          box-shadow: 0 0 14px rgba(217, 230, 0, 0.5);
-        }
-        .sistema-row:hover .sistema-row-word {
-          color: var(--lime);
-        }
-        .sistema-panel {
-          margin-top: 0.9rem;
-          font-size: 0.98rem;
-          line-height: 1.6;
-          color: rgba(241, 238, 231, 0.85);
-          max-width: 40rem;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .sistema-fill { transition: none; }
-        }
+        .sistema-nav-btn:hover { background: rgba(241, 238, 231, 0.18); }
 
         /* Capacidades — mapa de calor por nivel de implementación */
         .heatmap-legend {
@@ -1147,90 +1245,17 @@ export default function OliOneLanding() {
           line-height: 1.55;
           color: var(--ink-soft);
         }
-
-        /* Matriz Casos de uso × Medición */
-        .matriz-wrap {
-          margin-top: 3rem;
-        }
-        .matriz-heading {
-          font-size: 18px;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-        }
-        .matriz-sub {
-          font-size: 14px;
-          color: var(--ink-soft);
-          max-width: 40rem;
-          margin-bottom: 1.5rem;
-          line-height: 1.6;
-        }
-        .matriz-scroll {
-          overflow-x: auto;
-          border: 1px solid var(--border-soft);
-          border-radius: 16px;
-          background: white;
-        }
-        .matriz-table {
-          border-collapse: collapse;
-          width: 100%;
-          min-width: 640px;
-        }
-        .matriz-table th,
-        .matriz-table td {
-          padding: 0.9rem 0.75rem;
-          text-align: center;
-          border-bottom: 1px solid var(--border-soft);
-        }
-        .matriz-table th[scope='col'] {
-          font-family: var(--font-display);
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--ink-soft);
-          vertical-align: bottom;
-          line-height: 1.3;
-        }
-        .matriz-table th[scope='row'] {
-          text-align: left;
-          font-size: 14px;
-          font-weight: 700;
-          white-space: nowrap;
-          padding-left: 1.25rem;
-        }
-        .matriz-table tr:last-child th,
-        .matriz-table tr:last-child td {
-          border-bottom: none;
-        }
-        .matriz-dot {
-          display: inline-block;
-          width: 14px;
-          height: 14px;
-          border-radius: 50%;
-          background: var(--border-soft);
-          transition: background 0.2s ease, transform 0.2s ease;
-        }
-        .matriz-dot--on {
-          background: var(--lime);
-        }
-        .matriz-table tr:hover .matriz-dot--on {
-          transform: scale(1.25);
-        }
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border: 0;
-        }
-        .matriz-note {
+        .caso-card-metrics {
           margin-top: 1rem;
-          font-size: 13px;
+          padding-top: 1rem;
+          border-top: 1px solid var(--border-soft);
+          font-size: 12.5px;
           color: var(--ink-soft);
-          max-width: 38rem;
-          line-height: 1.6;
+          line-height: 1.5;
+        }
+        .caso-card-metrics b {
+          color: var(--ink);
+          font-weight: 700;
         }
 
         /* Formulario */
@@ -1442,14 +1467,6 @@ export default function OliOneLanding() {
                 Diagnóstico sin costo — respuesta en menos de 48 horas
               </p>
 
-              <div className="compat-strip">
-                <p className="compat-label">Se conecta con las herramientas que ya usas</p>
-                <div className="compat-list">
-                  {['Google Workspace', 'WhatsApp Business', 'Notion', 'Slack', 'HubSpot', 'Excel / Sheets'].map((tool) => (
-                    <span className="compat-item" key={tool}>{tool}</span>
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className="hero__visual">
@@ -1535,51 +1552,65 @@ export default function OliOneLanding() {
           <div className="container">
             <span className="eyebrow">Metodología</span>
             <h2 id="metodo-title" className="section-title">
-              El método SISTEMA®: un proceso consultivo, no una fórmula mágica.
+              El método SISTEMA®: un ciclo de mejora continua, no una fórmula mágica.
             </h2>
             <p className="section-lede">
-              Cada letra es una etapa real del trabajo que hacemos con tu empresa, en orden.
+              Cada letra es una etapa real del trabajo que hacemos con tu empresa.
+              Al llegar a Adapt, el ciclo vuelve a empezar — por eso es una rueda,
+              no una línea recta.
             </p>
-            <div className="sistema-list" ref={sistemaRef}>
-              {SISTEMA_STEPS.map((step, index) => {
-                const id = `${step.letter}-${index}`;
-                const isOpen = openStep === id;
-                const pct = Math.round(((index + 1) / SISTEMA_STEPS.length) * 100);
-                return (
-                  <div className="sistema-row" key={id} data-open={isOpen}>
+            <div className="sistema-layout" ref={sistemaRef}>
+              <SistemaWheel
+                steps={SISTEMA_STEPS}
+                activeIndex={sistemaActive}
+                onSelect={setSistemaActive}
+                inView={sistemaInView}
+              />
+              <div className="sistema-detail">
+                <div className="sistema-detail-head">
+                  <span className="sistema-detail-letter" aria-hidden="true">
+                    {SISTEMA_STEPS[sistemaActive].letter}
+                  </span>
+                  <div>
+                    <div className="sistema-detail-word">
+                      {SISTEMA_STEPS[sistemaActive].word} — {SISTEMA_STEPS[sistemaActive].verbo}
+                    </div>
+                    <div className="sistema-detail-verbo">
+                      Etapa {sistemaActive + 1} de {SISTEMA_STEPS.length}
+                    </div>
+                  </div>
+                </div>
+                <p>{SISTEMA_STEPS[sistemaActive].detalle}</p>
+                <div className="sistema-detail-nav">
+                  <span className="sistema-detail-count">
+                    {String(sistemaActive + 1).padStart(2, '0')} / {String(SISTEMA_STEPS.length).padStart(2, '0')}
+                  </span>
+                  <div className="sistema-detail-buttons">
                     <button
                       type="button"
-                      className="sistema-row-button"
-                      aria-expanded={isOpen}
-                      aria-controls={`panel-${id}`}
-                      onClick={() => setOpenStep(isOpen ? null : id)}
+                      className="sistema-nav-btn"
+                      aria-label="Etapa anterior"
+                      onClick={() =>
+                        setSistemaActive((current) => (current - 1 + SISTEMA_STEPS.length) % SISTEMA_STEPS.length)
+                      }
                     >
-                      <div className="sistema-row-head">
-                        <span className="sistema-row-label">
-                          <span className="sistema-row-letter" aria-hidden="true">{step.letter}</span>
-                          <span className="sistema-row-word">{step.word} — {step.verbo}</span>
-                          <span className="sistema-row-verbo">Etapa {index + 1}</span>
-                        </span>
-                        <span className="sistema-row-step">{index + 1}/{SISTEMA_STEPS.length}</span>
-                      </div>
-                      <div className="sistema-track">
-                        <span
-                          className="sistema-fill"
-                          style={{
-                            width: sistemaInView ? `${pct}%` : '0%',
-                            transitionDelay: `${index * 120}ms`,
-                          }}
-                        />
-                      </div>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </button>
-                    {isOpen && (
-                      <div className="sistema-panel" id={`panel-${id}`}>
-                        {step.detalle}
-                      </div>
-                    )}
+                    <button
+                      type="button"
+                      className="sistema-nav-btn"
+                      aria-label="Siguiente etapa"
+                      onClick={() => setSistemaActive((current) => (current + 1) % SISTEMA_STEPS.length)}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
                   </div>
-                );
-              })}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -1623,16 +1654,18 @@ export default function OliOneLanding() {
           <div className="container">
             <span className="eyebrow">Una solución de OLI One</span>
             <h2 id="academy-title" className="section-title">
-              OLI Academy: la capacitación dentro de tu sistema.
+              Una vez implementado el sistema, no te dejamos solo.
             </h2>
             <div className="academy-card">
               <div>
                 <span className="academy-tag">Una solución de OLI One</span>
-                <h3>Academias digitales para capacitación, onboarding y cumplimiento.</h3>
+                <h3>Capacitamos a tu equipo con las metodologías necesarias para operarlo.</h3>
                 <p>
-                  OLI Academy convierte el conocimiento interno de tu empresa en
-                  cursos interactivos con seguimiento de progreso, para que la
-                  capacitación deje de depender de explicar todo de palabra.
+                  Aplicar el sistema es solo la mitad del trabajo. OLI Academy
+                  convierte ese nuevo sistema en cursos interactivos de onboarding
+                  y capacitación, con seguimiento de progreso — para que tu equipo
+                  aprenda a operarlo desde el día uno, en vez de quedarse con un
+                  manual que nadie lee.
                 </p>
                 <a
                   href="https://oli.academy"
@@ -1661,54 +1694,11 @@ export default function OliOneLanding() {
                   <span className="num">{String(index + 1).padStart(2, '0')}</span>
                   <h3>{caso.depto}</h3>
                   <p>{caso.detalle}</p>
+                  <p className="caso-card-metrics">
+                    <b>Se mide con:</b> {caso.indicadores.map((i) => INDICADORES[i]).join(' · ')}
+                  </p>
                 </Reveal>
               ))}
-            </div>
-
-            <div className="matriz-wrap">
-              <p className="matriz-heading">Qué se mide en cada área</p>
-              <p className="matriz-sub">
-                No todos los departamentos necesitan los mismos indicadores.
-                Esta es la relación que trabajamos con más frecuencia.
-              </p>
-              <div className="matriz-scroll">
-                <table className="matriz-table">
-                  <thead>
-                    <tr>
-                      <th scope="col" />
-                      {INDICADORES.map((ind) => (
-                        <th scope="col" key={ind}>{ind}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {CASOS_USO.map((caso) => (
-                      <tr key={caso.depto}>
-                        <th scope="row">{caso.depto}</th>
-                        {INDICADORES.map((ind, indIndex) => {
-                          const aplica = caso.indicadores.includes(indIndex);
-                          return (
-                            <td key={ind}>
-                              <span
-                                className={`matriz-dot${aplica ? ' matriz-dot--on' : ''}`}
-                                aria-hidden="true"
-                              />
-                              <span className="sr-only">
-                                {aplica ? 'Aplica' : 'No aplica'}
-                              </span>
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="matriz-note">
-                Los resultados varían según cada empresa y proceso. Definimos las
-                métricas específicas de tu operación durante el diagnóstico,
-                antes de implementar cualquier cambio.
-              </p>
             </div>
           </div>
         </section>
