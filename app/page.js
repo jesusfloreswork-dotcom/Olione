@@ -1,7 +1,15 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { COMPANY_SIZES, validateLead } from '@/lib/validation';
+
+// Imágenes del carrusel del hero. Colócalas en /public con estos nombres
+// exactos: public/1.png y public/2.png.
+const HERO_IMAGES = [
+  { src: '/1.png', alt: 'OLI One — vista previa 1' },
+  { src: '/2.png', alt: 'OLI One — vista previa 2' },
+];
 
 const SISTEMA_STEPS = [
   {
@@ -108,47 +116,6 @@ const PROBLEMAS = [
   'Onboarding y capacitación que dependen de explicar todo de palabra.',
 ];
 
-const INDICADORES = [
-  'Tiempo de ciclo por proceso',
-  'Horas de trabajo manual reducidas',
-  'Errores por captura duplicada',
-  'Tiempo de respuesta a clientes internos y externos',
-  'Tiempo de incorporación de nuevo personal',
-];
-
-const CASOS_USO = [
-  {
-    depto: 'Recursos Humanos',
-    detalle:
-      'Onboarding estructurado, seguimiento de capacitación y procesos de contratación sin depender de carpetas sueltas.',
-    indicadores: [1, 2, 4],
-  },
-  {
-    depto: 'Operaciones',
-    detalle:
-      'Visibilidad del estado de cada proceso en tiempo real, con alertas cuando algo se detiene.',
-    indicadores: [0, 1, 2, 3],
-  },
-  {
-    depto: 'Administración',
-    detalle:
-      'Flujos de aprobación y control documental sin cadenas interminables de correos.',
-    indicadores: [0, 1, 2],
-  },
-  {
-    depto: 'Atención a cliente',
-    detalle:
-      'Respuestas consistentes y trazabilidad de cada solicitud, con agentes de IA que resuelven lo repetitivo.',
-    indicadores: [1, 3],
-  },
-  {
-    depto: 'Dirección general',
-    detalle:
-      'Un panel único para entender cómo está operando la empresa, sin pedir reportes a cada área.',
-    indicadores: [0, 1, 2, 3, 4],
-  },
-];
-
 
 // Detecta cuándo un contenedor entra al viewport, una sola vez.
 // Se usa para disparar animaciones que no deben repetirse en cada scroll.
@@ -205,6 +172,56 @@ function Reveal({ children, delay = 0, as: Tag = 'div', className = '' }) {
     >
       {children}
     </Tag>
+  );
+}
+
+// Carrusel del hero: cross-fade automático entre imágenes, con puntos de
+// navegación manual. Se detiene el auto-avance si el usuario prefiere
+// menos movimiento en su sistema.
+function HeroCarousel({ images }) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    if (images.length < 2) return undefined;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return undefined;
+
+    const id = setInterval(() => {
+      setActive((current) => (current + 1) % images.length);
+    }, 4500);
+    return () => clearInterval(id);
+  }, [images.length]);
+
+  return (
+    <>
+      {images.map((image, index) => (
+        <Image
+          key={image.src}
+          src={image.src}
+          alt={image.alt}
+          fill
+          sizes="(max-width: 960px) 90vw, 420px"
+          priority={index === 0}
+          className={`hero-carousel-img${index === active ? ' hero-carousel-img--active' : ''}`}
+        />
+      ))}
+      {images.length > 1 && (
+        <div className="hero-carousel-dots" role="tablist" aria-label="Vistas previas de OLI One">
+          {images.map((image, index) => (
+            <button
+              key={image.src}
+              type="button"
+              role="tab"
+              aria-current={index === active}
+              aria-label={`Ver imagen ${index + 1}`}
+              onClick={() => setActive(index)}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -738,17 +755,50 @@ export default function OliOneLanding() {
           overflow: hidden;
           aspect-ratio: 4 / 5;
           background: linear-gradient(155deg, var(--violet) 0%, var(--ink) 75%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 2rem;
-          text-align: center;
         }
-        .hero-photo span {
-          color: rgba(241, 238, 231, 0.55);
-          font-size: 13px;
-          line-height: 1.6;
-          max-width: 13rem;
+        .hero-carousel-img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 1.5rem;
+          box-sizing: border-box;
+          opacity: 0;
+          transition: opacity 0.9s ease;
+        }
+        .hero-carousel-img--active {
+          opacity: 1;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-carousel-img { transition: none; }
+        }
+        .hero-carousel-dots {
+          position: absolute;
+          bottom: 16px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 8px;
+          z-index: 2;
+        }
+        .hero-carousel-dots button {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(241, 238, 231, 0.5);
+          cursor: pointer;
+          padding: 0;
+        }
+        .hero-carousel-dots button[aria-current='true'] {
+          background: var(--lime);
+          width: 22px;
+          border-radius: 5px;
+        }
+        .hero-carousel-dots button:focus-visible {
+          outline: 2px solid var(--lime);
+          outline-offset: 2px;
         }
 
         .hero-float {
@@ -1204,60 +1254,6 @@ export default function OliOneLanding() {
         .academy-card p { opacity: 0.9; }
         .academy-card .btn { margin-top: 1.5rem; }
 
-        /* Casos de uso */
-        .casos-grid {
-          margin-top: 2.5rem;
-          display: grid;
-          gap: 1.25rem;
-        }
-        @media (min-width: 760px) {
-          .casos-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (min-width: 1080px) {
-          .casos-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        .caso-card {
-          border: 1px solid var(--border-soft);
-          border-radius: 16px;
-          padding: 1.75rem 1.5rem;
-          background: white;
-          transition: transform 0.18s ease, box-shadow 0.18s ease;
-        }
-        .caso-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 10px 24px rgba(28, 27, 31, 0.1);
-        }
-        .caso-card .num {
-          display: block;
-          font-family: var(--font-display);
-          font-size: 13px;
-          font-weight: 700;
-          color: var(--violet);
-          margin-bottom: 0.75rem;
-        }
-        .caso-card h3 {
-          font-size: 16px;
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-        }
-        .caso-card p {
-          font-size: 14px;
-          line-height: 1.55;
-          color: var(--ink-soft);
-        }
-        .caso-card-metrics {
-          margin-top: 1rem;
-          padding-top: 1rem;
-          border-top: 1px solid var(--border-soft);
-          font-size: 12.5px;
-          color: var(--ink-soft);
-          line-height: 1.5;
-        }
-        .caso-card-metrics b {
-          color: var(--ink);
-          font-weight: 700;
-        }
-
         /* Formulario */
         .form-card {
           margin-top: 2.5rem;
@@ -1402,7 +1398,6 @@ export default function OliOneLanding() {
             <a href="#metodo">Método SISTEMA®</a>
             <a href="#capacidades">Capacidades</a>
             <a href="#academy">OLI Academy</a>
-            <a href="#casos">Casos de uso</a>
             <a href="#diagnostico">Contacto</a>
           </nav>
 
@@ -1435,7 +1430,6 @@ export default function OliOneLanding() {
             <a href="#metodo" onClick={() => setMenuOpen(false)}>Método SISTEMA®</a>
             <a href="#capacidades" onClick={() => setMenuOpen(false)}>Capacidades</a>
             <a href="#academy" onClick={() => setMenuOpen(false)}>OLI Academy</a>
-            <a href="#casos" onClick={() => setMenuOpen(false)}>Casos de uso</a>
             <a href="#diagnostico" onClick={() => setMenuOpen(false)} className="btn btn--primary">
               Solicita un diagnóstico
             </a>
@@ -1471,10 +1465,7 @@ export default function OliOneLanding() {
 
             <div className="hero__visual">
               <div className="hero-photo">
-                <span>
-                  [PLACEHOLDER: fotografía profesional del equipo o de una
-                  sesión de diagnóstico con cliente — pendiente de reemplazar]
-                </span>
+                <HeroCarousel images={HERO_IMAGES} />
               </div>
 
               <div className="hero-float hero-float--badge">
@@ -1677,28 +1668,6 @@ export default function OliOneLanding() {
                   Conoce OLI Academy
                 </a>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Casos de uso + Medición, combinados */}
-        <section className="section" id="casos" style={{ paddingTop: 0 }} aria-labelledby="casos-title">
-          <div className="container">
-            <span className="eyebrow">Casos de uso y medición</span>
-            <h2 id="casos-title" className="section-title">
-              Un sistema distinto para cada área — y lo que medimos en cada una.
-            </h2>
-            <div className="casos-grid">
-              {CASOS_USO.map((caso, index) => (
-                <Reveal key={caso.depto} delay={index * 70} className="caso-card">
-                  <span className="num">{String(index + 1).padStart(2, '0')}</span>
-                  <h3>{caso.depto}</h3>
-                  <p>{caso.detalle}</p>
-                  <p className="caso-card-metrics">
-                    <b>Se mide con:</b> {caso.indicadores.map((i) => INDICADORES[i]).join(' · ')}
-                  </p>
-                </Reveal>
-              ))}
             </div>
           </div>
         </section>
