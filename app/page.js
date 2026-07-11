@@ -657,8 +657,7 @@ export default function OliOneLanding() {
                 </p>
                 <a
                   href="https://oli.academy"
-                  className="btn btn--primary academy-btn"
-                  style={{ background: 'white', color: 'var(--violet)' }}
+                  className="btn academy-btn"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

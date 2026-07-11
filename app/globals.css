@@ -768,6 +768,14 @@
         }
         .academy-card p { opacity: 0.9; }
         .academy-card .btn { margin-top: 1.5rem; }
+        .academy-btn {
+          background: transparent;
+          border: 2px solid white;
+          color: white;
+        }
+        .academy-btn:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
         .academy-btn-logo {
           height: 16px;
           width: auto;
