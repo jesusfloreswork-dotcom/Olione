@@ -379,6 +379,12 @@ export default function OliOneLanding() {
       setStatusMessage(
         'Recibimos tu solicitud. Te contactaremos en menos de dos días hábiles.'
       );
+
+      // Meta Pixel: evento de conversión para optimizar la campaña.
+      if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
+        window.fbq('track', 'Lead');
+      }
+
       setFormData({
         nombre: '',
         empresa: '',
