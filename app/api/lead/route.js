@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase-server';
-import { validateLead, LEAD_FIELDS } from '@/lib/validation';
+import { validateLead, LEAD_FIELD_MAP } from '@/lib/validation';
 
 // Rate limit persistente en Supabase (no en memoria): funciona de forma
 // confiable en un entorno serverless como Vercel, donde cada invocación
@@ -70,8 +70,8 @@ export async function POST(request) {
     }
 
     const record = {};
-    for (const field of LEAD_FIELDS) {
-      if (body[field] !== undefined) record[field] = body[field];
+    for (const [clientField, dbColumn] of Object.entries(LEAD_FIELD_MAP)) {
+      if (body[clientField] !== undefined) record[dbColumn] = body[clientField];
     }
     record.origen = 'oli-one';
 
