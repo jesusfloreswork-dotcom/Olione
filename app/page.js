@@ -5,6 +5,39 @@ import { COMPANY_SIZES, validateLead } from '@/lib/validation';
 
 // Imágenes del carrusel del hero. Colócalas en /public con estos nombres
 // exactos: public/1.png y public/2.png.
+const FAQ_ITEMS = [
+  {
+    pregunta: '¿Cuánto cuesta el diagnóstico?',
+    respuesta:
+      'Es gratuito y sin compromiso. Sirve para que ambos decidamos si tiene sentido seguir — no te cobramos por esa primera conversación.',
+  },
+  {
+    pregunta: '¿Cuánto tiempo toma implementar un sistema?',
+    respuesta:
+      'Depende del alcance real de tu empresa, y eso es justo lo que define el diagnóstico: dimensionamos tu caso antes de comprometernos a un tiempo o un presupuesto, en vez de darte un número genérico de entrada.',
+  },
+  {
+    pregunta: '¿Mi equipo necesita saber de tecnología?',
+    respuesta:
+      'No. Diseñamos el sistema alrededor de cómo trabaja tu equipo hoy, y los capacitamos para operarlo — por eso existe OLI Academy dentro del proceso, no lo dejamos como un manual que nadie lee.',
+  },
+  {
+    pregunta: '¿Esto es lo mismo que contratar una agencia de automatización?',
+    respuesta:
+      'No exactamente. No llegamos a vender una herramienta aislada de automatización — primero analizamos cómo opera tu empresa completa, y el sistema se diseña alrededor de eso, no al revés.',
+  },
+  {
+    pregunta: '¿Qué pasa después del diagnóstico?',
+    respuesta:
+      'Te compartimos qué encontramos y una propuesta concreta con alcance y costo. Tú decides si avanzamos — no hay contrato automático ni presión para continuar.',
+  },
+  {
+    pregunta: '¿Con qué tamaño de empresa trabajan mejor?',
+    respuesta:
+      'Con empresas de 11 a 500 personas que ya tienen procesos definidos, pero sienten que la operación depende de personas específicas en vez de sistemas que cualquiera pueda operar.',
+  },
+];
+
 const HERO_IMAGES = [
   { src: '/1.png', alt: 'Oli — vista previa 1' },
   { src: '/2.png', alt: 'Oli — vista previa 2' },
@@ -309,6 +342,7 @@ function SistemaWheel({ steps, activeIndex, onSelect, inView }) {
 export default function OliOneLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sistemaActive, setSistemaActive] = useState(0);
+  const [openFaq, setOpenFaq] = useState(null);
   const [sistemaRef, sistemaInView] = useInView(0.2);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -684,6 +718,44 @@ export default function OliOneLanding() {
           </div>
         </section>
 
+        {/* FAQ */}
+        <section className="section" id="faq" style={{ paddingTop: 0 }} aria-labelledby="faq-title">
+          <div className="container">
+            <span className="eyebrow">Preguntas frecuentes</span>
+            <h2 id="faq-title" className="section-title">
+              ¿Tienes dudas? Te las aclaramos.
+            </h2>
+            <div className="faq-list">
+              {FAQ_ITEMS.map((item, index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div className="faq-item" key={item.pregunta} data-open={isOpen}>
+                    <button
+                      type="button"
+                      className="faq-trigger"
+                      aria-expanded={isOpen}
+                      aria-controls={`faq-panel-${index}`}
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                    >
+                      <span>{item.pregunta}</span>
+                      <span className="faq-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                          <path d="M4 7L9 12L14 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    </button>
+                    {isOpen && (
+                      <div className="faq-panel" id={`faq-panel-${index}`}>
+                        {item.respuesta}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* Formulario de diagnóstico */}
         <section className="section" id="diagnostico" style={{ paddingTop: 0 }} aria-labelledby="form-title">
           <div className="container">
@@ -882,8 +954,12 @@ export default function OliOneLanding() {
         <section className="section section--dark cta-final" aria-labelledby="cta-final-title">
           <div className="container">
             <h2 id="cta-final-title" className="section-title">
-              Tu empresa no necesita más herramientas. Necesita un mejor sistema.
+              Tu empresa no necesita más herramientas. <mark>Necesita un mejor sistema.</mark>
             </h2>
+            <p className="cta-final-rhythm">
+              Lo diagnosticamos. Lo diseñamos. Lo medimos. Y cuando tu empresa
+              cambie, lo volvemos a ajustar.
+            </p>
             <div className="hero__ctas">
               <a href="#diagnostico" className="btn btn--lime">Solicita un diagnóstico</a>
             </div>
