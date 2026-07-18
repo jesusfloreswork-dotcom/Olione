@@ -1037,4 +1037,36 @@
         }
         .legal-main a { color: var(--violet); font-weight: 600; }
         .legal-main strong { color: var(--ink); }
+
+        /* Botón flotante de WhatsApp */
+        .whatsapp-float {
+          position: fixed;
+          bottom: 22px;
+          right: 22px;
+          width: 58px;
+          height: 58px;
+          border-radius: 50%;
+          background: #25d366;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+          z-index: 60;
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+        .whatsapp-float:hover {
+          transform: scale(1.08);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .whatsapp-float { transition: none; }
+        }
+        @media (max-width: 640px) {
+          .whatsapp-float {
+            bottom: 16px;
+            right: 16px;
+            width: 52px;
+            height: 52px;
+          }
+        }
       

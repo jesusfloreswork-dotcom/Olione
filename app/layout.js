@@ -1,6 +1,7 @@
 import { Space_Grotesk, Inter } from 'next/font/google';
 import Script from 'next/script';
 import { Analytics } from '@vercel/analytics/next';
+import WhatsAppButton from './whatsapp-button';
 import './globals.css';
 
 const spaceGrotesk = Space_Grotesk({
@@ -119,6 +120,7 @@ export default function RootLayout({ children }) {
         </noscript>
 
         <Analytics />
+        <WhatsAppButton />
       </body>
     </html>
   );
